@@ -3,7 +3,7 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:   # mund ta nisesh manualisht nga GitHub
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,6 +21,10 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install SDK components
+        run: |
+          yes | sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools" || true
+
       - name: Generate Gradle Wrapper
         run: gradle wrapper --gradle-version 8.9
 
@@ -28,10 +32,21 @@ jobs:
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Rename APK
+        if: success()
         run: cp app/build/outputs/apk/debug/app-debug.apk Inventari.apk
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Inventari-APK
           path: Inventari.apk
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: |
+            app/build/outputs/logs/
+            build/reports/
