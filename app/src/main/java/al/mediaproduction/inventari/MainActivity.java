@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
     private SwipeRefreshLayout swipe;
-    private static final String START_URL = "http://13.140.152.29/";
+    private static final String START_URL = "http://13.140.152.29:8090/";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
